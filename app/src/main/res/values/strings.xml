@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MakeYourHome AI</string>
+    
+    <!-- Home Screen -->
+    <string name="welcome_title">Trasforma la tua Casa</string>
+    <string name="welcome_subtitle">Usa l\'AI per visualizzare la ristrutturazione dei tuoi ambienti</string>
+    <string name="btn_take_photo">Scatta Foto</string>
+    <string name="btn_choose_gallery">Scegli dalla Galleria</string>
+    
+    <!-- Room Types -->
+    <string name="room_living_room">Soggiorno</string>
+    <string name="room_kitchen">Cucina</string>
+    <string name="room_bedroom">Camera da Letto</string>
+    <string name="room_bathroom">Bagno</string>
+    <string name="room_garden">Giardino</string>
+    <string name="room_office">Studio</string>
+    
+    <!-- Styles -->
+    <string name="style_modern">Moderno</string>
+    <string name="style_classic">Classico</string>
+    <string name="style_minimalist">Minimalista</string>
+    <string name="style_rustic">Rustico</string>
+    <string name="style_industrial">Industriale</string>
+    <string name="style_scandinavian">Scandinavo</string>
+    
+    <!-- Camera -->
+    <string name="camera_permission_required">Permesso fotocamera richiesto</string>
+    <string name="camera_permission_denied">Permesso fotocamera negato</string>
+    <string name="capture_photo">Scatta</string>
+    
+    <!-- Transform -->
+    <string name="select_room_type">Seleziona tipo di ambiente</string>
+    <string name="select_style">Seleziona stile</string>
+    <string name="btn_transform">Trasforma con AI</string>
+    <string name="transforming">Trasformazione in corso...</string>
+    <string name="transform_success">Trasformazione completata!</string>
+    <string name="transform_error">Errore durante la trasformazione</string>
+    
+    <!-- Results -->
+    <string name="before">Prima</string>
+    <string name="after">Dopo</string>
+    <string name="btn_save">Salva</string>
+    <string name="btn_share">Condividi</string>
+    <string name="btn_retry">Riprova</string>
+    <string name="saved_success">Immagine salvata!</string>
+    
+    <!-- Errors -->
+    <string name="error_generic">Si è verificato un errore</string>
+    <string name="error_network">Errore di connessione</string>
+    <string name="error_api">Errore API</string>
+</resources>
