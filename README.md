@@ -1,367 +1,303 @@
-# MakeYourHomeAi 🏠✨
+# 🏠 MakeYourHomeAi
 
-[![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg)](https://kotlinlang.org)
-[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+App Android per trasformare foto di ambienti domestici utilizzando l'AI di Stability AI.
 
-Un'app Android intelligente che utilizza l'AI per trasformare virtualmente gli ambienti della tua casa, permettendoti di visualizzare come apparirebbero dopo una ristrutturazione con diversi stili di design.
-
-![MakeYourHomeAi Banner](https://via.placeholder.com/800x200/6750A4/FFFFFF?text=MakeYourHomeAi+-+Trasforma+la+tua+Casa+con+l%27AI)
+![Android](https://img.shields.io/badge/Android-SDK%2024+-green.svg)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)
+![Compose](https://img.shields.io/badge/Jetpack%20Compose-2023.10.01-purple.svg)
 
 ---
 
-## 🎯 Funzionalità
+## 📱 Funzionalità
 
-- 📸 **Cattura foto** di ambienti con fotocamera integrata
-- 🏠 **6 tipi di ambienti**: Soggiorno, Cucina, Camera, Bagno, Giardino, Studio
-- 🎨 **6 stili di design**: Moderno, Classico, Minimalista, Rustico, Industriale, Scandinavo
-- 🤖 **Trasformazione AI** powered by Stability AI (Stable Diffusion XL)
-- 📊 **Confronto prima/dopo** con visualizzazione side-by-side
-- 💾 **Salvataggio risultati** per confronti futuri
-- 🎭 **UI moderna** con Material Design 3 e Jetpack Compose
-
----
-
-## 📱 Screenshot
-
-| Home Screen | Camera | Transform | Result |
-|------------|--------|-----------|--------|
-| ![Home](https://via.placeholder.com/200x400/6750A4/FFFFFF?text=Home) | ![Camera](https://via.placeholder.com/200x400/6750A4/FFFFFF?text=Camera) | ![Transform](https://via.placeholder.com/200x400/6750A4/FFFFFF?text=Transform) | ![Result](https://via.placeholder.com/200x400/6750A4/FFFFFF?text=Result) |
+- ✅ **Cattura foto** dalla fotocamera del dispositivo
+- ✅ **Selezione immagini** dalla galleria
+- ✅ **Trasformazione AI** con Stability AI API
+- ✅ **Stili multipli**: Moderno, Minimale, Industrial, Nordico
+- ✅ **Tipi di ambiente**: Soggiorno, Camera, Cucina, Bagno
+- ✅ **Correzione automatica** orientamento immagini (EXIF)
+- ✅ **Ridimensionamento intelligente** per dimensioni API ottimali
+- ✅ **Interfaccia Material Design 3**
 
 ---
 
-## 🛠️ Tecnologie
+## 🛠️ Tecnologie Utilizzate
 
-### Stack Principale
-- **Kotlin** - Linguaggio di programmazione
+### Core
+- **Kotlin** 1.9.0
 - **Jetpack Compose** - UI moderna e dichiarativa
-- **CameraX** - Gestione fotocamera
-- **Retrofit** - HTTP client per API calls
-- **Stability AI** - Trasformazione immagini con AI
-- **Coil** - Image loading e caching
+- **Material Design 3** - Design system moderno
+- **Navigation Compose** - Navigazione tra schermate
 
 ### Architettura
 - **MVVM** (Model-View-ViewModel)
-- **Repository Pattern** per business logic
-- **Coroutines** per operazioni asincrone
-- **StateFlow** per reactive state management
+- **Repository Pattern** - Gestione dati centralizzata
+- **Kotlin Coroutines** - Operazioni asincrone
+- **StateFlow** - Gestione stato reattiva
+
+### API & Networking
+- **Stability AI API** (SD3) - Generazione immagini AI
+- **OkHttp** - Client HTTP con multipart/form-data
+- **ExifInterface** - Correzione orientamento immagini
+
+### Fotocamera & Media
+- **CameraX** - API fotocamera moderna
+- **Coil** - Caricamento immagini asincrono
+- **Bitmap Processing** - Ridimensionamento e compressione
 
 ---
 
 ## 📋 Requisiti
 
-- **Android Studio**: Hedgehog (2023.1.1) o superiore
-- **Android SDK**: API 24+ (Android 7.0+)
-- **JDK**: 17 o superiore
+- **Android SDK**: 24+ (Android 7.0+)
+- **Target SDK**: 34 (Android 14)
 - **Gradle**: 8.2
-- **Stability AI API Key** (fornita nel progetto)
+- **AGP**: 8.2.2
+- **Kotlin**: 1.9.0
+- **API Key Stability AI** (configurata nel repository)
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installazione
 
-### 1. Clone il Repository
+### 1. Clona il Repository
 
 ```bash
-git clone https://github.com/RicAnn/MakeYourHomeAi.git
+git clone https://github.com/tuousername/MakeYourHomeAi.git
 cd MakeYourHomeAi
 ```
 
 ### 2. Configura API Key
 
-Il file `local.properties` è già configurato con l'API key:
-
-```properties
-STABILITY_API_KEY=your_api_key_here
+L'API key è già configurata in `ImageTransformRepository.kt`:
+```kotlin
+private val apiKey = "sk-GmrhCzfBj8FQPICcsC7VJckv49PttRT4Z3mNuNzBpf5t5gaZ"
 ```
 
-✅ Nessuna configurazione aggiuntiva necessaria!
+⚠️ **Nota**: Per uso in produzione, sposta la chiave in un file `local.properties` o usa variabili d'ambiente.
 
-### 3. Apri in Android Studio
+### 3. Compila e Installa
 
-1. Apri Android Studio
-2. File → Open → Seleziona la cartella `MakeYourHomeAi`
-3. Attendi la sincronizzazione Gradle (automatica)
+```bash
+# Pulisci build precedenti
+gradlew.bat clean
 
-### 4. Esegui l'App
+# Compila APK debug
+gradlew.bat assembleDebug
 
-1. Connetti un dispositivo Android o avvia un emulatore
-2. Clicca sul pulsante ▶️ Run (o premi `Shift+F10`)
-3. L'app si installerà automaticamente
+# Installa su dispositivo connesso
+adb install -r app\build\outputs\apk\debug\app-debug.apk
+```
 
 ---
 
-## 📖 Documentazione Completa
+## 📁 Struttura Progetto
 
-Per informazioni dettagliate, consulta:
-
-- 📘 [**QUICK_START.md**](QUICK_START.md) - Guida rapida per iniziare
-- 🔧 [**DEVELOPMENT.md**](DEVELOPMENT.md) - Guida allo sviluppo e architettura
-- 🔌 [**API_INTEGRATION.md**](API_INTEGRATION.md) - Documentazione API Stability AI
-- 📊 [**PROJECT_SUMMARY.md**](PROJECT_SUMMARY.md) - Riepilogo completo del progetto
+```
+app/src/main/java/com/makeyourhomeai/
+├── MainActivity.kt                    # Activity principale
+├── repository/
+│   └── ImageTransformRepository.kt    # Logica API e processing immagini
+├── viewmodel/
+│   └── TransformViewModel.kt          # ViewModel per gestione stato UI
+├── ui/
+│   ├── navigation/
+│   │   └── NavGraph.kt                # Configurazione navigazione
+│   ├── screens/
+│   │   ├── TransformScreen.kt         # Schermata principale trasformazione
+│   │   └── CameraScreen.kt            # Schermata cattura foto
+│   └── theme/
+│       └── ...                        # Configurazione tema Material 3
+```
 
 ---
 
 ## 🎨 Come Funziona
 
-### Flusso Utente
+### 1. Cattura/Selezione Immagine
+- L'utente scatta una foto o la seleziona dalla galleria
+- L'app richiede permessi fotocamera/storage se necessario
 
-```mermaid
-graph LR
-    A[Home Screen] --> B[Scatta Foto]
-    B --> C[Seleziona Ambiente]
-    C --> D[Seleziona Stile]
-    D --> E[Trasforma con AI]
-    E --> F[Confronta Risultati]
-    F --> G[Salva/Condividi]
+### 2. Configurazione Trasformazione
+- Selezione tipo ambiente (Soggiorno, Camera, Cucina, Bagno)
+- Selezione stile (Moderno, Minimale, Industrial, Nordico)
+
+### 3. Processing Immagine
+```kotlin
+1. Carica immagine originale
+2. Corregge orientamento con metadati EXIF
+3. Trova dimensioni ottimali tra quelle supportate dall'API
+4. Ridimensiona con center-crop mantenendo aspect ratio
+5. Comprimi sotto 5MB
+6. Invia a Stability AI API
 ```
 
-### 1. Cattura Immagine
-Usa la fotocamera integrata per scattare una foto dell'ambiente che vuoi trasformare.
+### 4. Generazione AI
+- L'API Stability AI (SD3) processa l'immagine
+- Genera nuova immagine con lo stile selezionato
+- Mantiene la struttura dell'ambiente originale (strength=0.50)
 
-### 2. Seleziona Parametri
-Scegli:
-- **Tipo di ambiente**: Soggiorno, Cucina, Camera, Bagno, Giardino, Studio
-- **Stile di design**: Moderno, Classico, Minimalista, Rustico, Industriale, Scandinavo
-
-### 3. Trasformazione AI
-L'app invia l'immagine a Stability AI che applica il prompt personalizzato per generare una versione trasformata.
-
-### 4. Risultato
-Visualizza il confronto prima/dopo e salva il risultato!
+### 5. Visualizzazione Risultato
+- L'immagine trasformata viene mostrata nell'app
+- Opzioni: Ritrasforma, Nuova Foto
 
 ---
 
-## 🏗️ Struttura Progetto
+## 🔧 Configurazione AI Parameters
 
-```
-MakeYourHomeAi/
-│
-├── app/src/main/
-│   ├── java/com/makeyourhomeai/
-│   │   │
-│   │   ├── 📱 MainActivity.kt
-│   │   │
-│   │   ├── 🔧 data/
-│   │   │   ├── api/
-│   │   │   │   ├── StabilityAIService.kt     # API client
-│   │   │   │   └── StabilityAIModels.kt      # Data models
-│   │   │   ├── models/
-│   │   │   │   ├── RoomType.kt               # Tipi ambienti
-│   │   │   │   ├── DesignStyle.kt            # Stili design
-│   │   │   │   └── TransformRequest.kt       # Request models
-│   │   │   └── repository/
-│   │   │       └── ImageTransformRepository.kt
-│   │   │
-│   │   └── 🎨 ui/
-│   │       ├── screens/
-│   │       │   ├── HomeScreen.kt             # Schermata iniziale
-│   │       │   ├── CameraScreen.kt           # Cattura foto
-│   │       │   └── TransformScreen.kt        # Trasformazione
-│   │       ├── viewmodels/
-│   │       │   └── TransformViewModel.kt     # State management
-│   │       ├── navigation/
-│   │       │   └── NavGraph.kt               # Navigation
-│   │       └── theme/
-│   │           ├── Theme.kt                  # Material Design
-│   │           └── Type.kt                   # Typography
-│   │
-│   └── res/                                   # Android resources
-│
-├── 📚 Documentazione
-│   ├── README.md                              # Questo file
-│   ├── QUICK_START.md                         # Guida rapida
-│   ├── DEVELOPMENT.md                         # Guida sviluppo
-│   ├── API_INTEGRATION.md                     # Documentazione API
-│   └── PROJECT_SUMMARY.md                     # Riepilogo progetto
-│
-└── ⚙️ Configurazione
-    ├── build.gradle.kts
-    ├── settings.gradle.kts
-    └── local.properties                       # API key
+I parametri sono ottimizzati per bilanciare qualità e fedeltà strutturale:
+
+```kotlin
+// In ImageTransformRepository.kt
+.addFormDataPart("cfg_scale", "7")      // Aderenza al prompt
+.addFormDataPart("steps", "40")         // Qualità generazione
+.addFormDataPart("strength", "0.50")    // Bilanciamento trasformazione/fedeltà
 ```
 
----
-
-## 🎯 Ambienti e Stili
-
-### 🏠 Tipi di Ambienti (6)
-
-| Icona | Nome | Descrizione |
-|-------|------|-------------|
-| 🛋️ | **Soggiorno** | Living room, salotto |
-| 🍳 | **Cucina** | Kitchen, area pranzo |
-| 🛏️ | **Camera da Letto** | Bedroom |
-| 🚿 | **Bagno** | Bathroom |
-| 🌳 | **Giardino** | Garden, outdoor |
-| 💼 | **Studio** | Home office |
-
-### 🎨 Stili di Design (6)
-
-| Stile | Caratteristiche |
-|-------|----------------|
-| **Moderno** | Linee pulite, colori neutri, design minimalista |
-| **Classico** | Mobili eleganti, design tradizionale, dettagli ornati |
-| **Minimalista** | Essenziale, bianco, spazio pulito |
-| **Rustico** | Legno naturale, toni caldi, elementi vintage |
-| **Industriale** | Mattoni a vista, metallo, cemento, stile urbano |
-| **Scandinavo** | Legno chiaro, pareti bianche, design funzionale |
+### Regolazione `strength`:
+- **0.30-0.40**: Trasformazione minima, massima fedeltà
+- **0.50**: Bilanciato (default)
+- **0.60-0.70**: Trasformazione più evidente
 
 ---
 
-## 💡 Esempi di Utilizzo
+## 📐 Dimensioni Supportate
 
-### Combinazioni Consigliate
+L'app supporta automaticamente queste dimensioni per l'API:
 
-| Ambiente | Stile Migliore | Risultato Atteso |
-|----------|---------------|------------------|
-| Soggiorno | Moderno | ⭐⭐⭐⭐⭐ Ambiente luminoso e contemporaneo |
-| Cucina | Scandinavo | ⭐⭐⭐⭐⭐ Spazio funzionale e accogliente |
-| Camera | Minimalista | ⭐⭐⭐⭐⭐ Ambiente rilassante e ordinato |
-| Bagno | Moderno | ⭐⭐⭐⭐ Design pulito e elegante |
-| Giardino | Rustico | ⭐⭐⭐⭐ Atmosfera naturale e calda |
-| Studio | Industriale | ⭐⭐⭐⭐ Spazio produttivo e creativo |
+| Larghezza | Altezza | Aspect Ratio | Uso Tipico |
+|-----------|---------|--------------|------------|
+| 1024 | 1024 | 1:1 | Quadrato |
+| 1152 | 896 | ~4:3 | Landscape |
+| 1216 | 832 | ~3:2 | Landscape |
+| 1344 | 768 | ~16:9 | Landscape wide |
+| 1536 | 640 | ~21:9 | Ultra-wide |
+| 640 | 1536 | ~9:21 | Portrait ultra-tall |
+| 768 | 1344 | ~9:16 | Portrait |
+| 832 | 1216 | ~2:3 | Portrait |
+| 896 | 1152 | ~3:4 | Portrait |
 
----
-
-## 📈 Performance
-
-### Tempi di Elaborazione
-- **Cattura foto**: Istantaneo
-- **Trasformazione AI**: 30-60 secondi
-- **Salvataggio risultato**: 2-3 secondi
-
-### Ottimizzazioni Implementate
-✅ Ridimensionamento automatico immagini (max 1024x1024)  
-✅ Compressione ottimizzata  
-✅ Cache intelligente  
-✅ Operazioni asincrone con Coroutines  
-✅ Timeout configurati appropriatamente  
-
----
-
-## 🔐 Sicurezza e Privacy
-
-- ✅ API key gestita in modo sicuro tramite `BuildConfig`
-- ✅ File sensibili esclusi da Git (`.gitignore`)
-- ✅ HTTPS per tutte le comunicazioni
-- ✅ Permessi richiesti solo quando necessario
-- ✅ Nessun dato utente inviato senza consenso
+L'app seleziona automaticamente la dimensione più vicina all'aspect ratio originale.
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Problemi Comuni
+### Timeout API
+**Problema**: "java.net.SocketTimeoutException"
+**Soluzione**: L'API può impiegare 60-120 secondi. Il timeout è impostato a 2 minuti. Riprova.
 
-**❌ Gradle Sync Failed**
-```bash
-./gradlew clean
-./gradlew build --refresh-dependencies
-```
+### Immagine Ruotata
+**Problema**: L'immagine appare ruotata dopo la trasformazione
+**Soluzione**: ✅ Risolto con `ExifInterface` - correzione automatica
 
-**❌ API Error 401**
-- Verifica che `local.properties` contenga la chiave corretta
-- Rebuild progetto: `Build > Clean + Rebuild`
+### API Error 400
+**Problema**: "strength: required when 'mode' is set to 'image-to-image'"
+**Soluzione**: ✅ Risolto - parametro `strength` corretto
 
-**❌ Camera Permission Denied**
-- Vai in Impostazioni → App → MakeYourHomeAi → Permessi
-- Abilita "Fotocamera"
+### Crediti Esauriti
+**Problema**: "Insufficient credits"
+**Soluzione**: Stability AI ha un limite giornaliero gratuito. Attendi o upgrada il piano.
 
-**❌ Timeout During Transform**
-- Verifica connessione internet stabile
-- Riprova (server API potrebbe essere occupato)
-
-Per più dettagli, consulta [QUICK_START.md](QUICK_START.md#troubleshooting)
-
----
-
-## 🚀 Roadmap
-
-### v1.1 (Prossima Release)
-- [ ] Implementa gallery picker
-- [ ] Salvataggio in galleria Android
-- [ ] Share functionality
-- [ ] Loading indicators migliorati
-
-### v1.2
-- [ ] Storico trasformazioni locale
-- [ ] Confronto slider interattivo
-- [ ] Batch processing
-- [ ] Export PDF report
-
-### v1.3
-- [ ] Cloud sync con Firebase
-- [ ] Account utente
-- [ ] Community sharing
-- [ ] Rating e feedback
+### ADB Non Vede Dispositivo
+**Problema**: `adb devices` non mostra dispositivo
+**Soluzione**:
+1. Abilita Debug USB nelle Opzioni Sviluppatore
+2. Installa driver USB Samsung
+3. `adb kill-server && adb start-server`
 
 ---
 
-## 🤝 Contribuire
+## 📊 Performance
 
-Contributi, issues e richieste di funzionalità sono benvenuti!
+### Tempi Medi
+- **Cattura foto**: < 1s
+- **Processing locale** (resize + compress): 2-5s
+- **API Stability AI**: 30-90s (variabile)
+- **Totale trasformazione**: ~40-100s
 
-1. **Fork** il progetto
-2. Crea un **branch** per la tua feature (`git checkout -b feature/AmazingFeature`)
-3. **Commit** le modifiche (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** al branch (`git push origin feature/AmazingFeature`)
-5. Apri una **Pull Request**
+### Dimensioni
+- **APK Debug**: ~15-20 MB
+- **Immagine input** (dopo compressione): < 5 MB
+- **Immagine output**: ~500KB - 2MB
 
-Consulta [DEVELOPMENT.md](DEVELOPMENT.md) per linee guida dettagliate.
+---
+
+## 🔐 Sicurezza
+
+⚠️ **IMPORTANTE PER PRODUZIONE**:
+
+1. **Non committare API keys** nel repository pubblico
+2. Usa variabili d'ambiente o `local.properties`:
+   ```kotlin
+   // In local.properties (gitignored)
+   STABILITY_API_KEY=your_key_here
+   
+   // In build.gradle.kts
+   android {
+       defaultConfig {
+           buildConfigField("String", "STABILITY_API_KEY", "\"${project.properties["STABILITY_API_KEY"]}\"")
+       }
+   }
+   ```
+3. Implementa **ProGuard/R8** per offuscare il codice
+4. Usa **App Bundle** invece di APK per distribuzione
+
+---
+
+## 🚀 Prossimi Sviluppi
+
+### Funzionalità Pianificate
+- [ ] **Salva immagine** trasformata in galleria
+- [ ] **Condividi** immagine su social/messaging
+- [ ] **Storico trasformazioni** locali
+- [ ] **Confronto prima/dopo** con slider
+- [ ] **Controlli avanzati** (slider per parametri AI)
+- [ ] **Batch processing** (multiple immagini)
+- [ ] **Preset personalizzati** (salva combinazioni stile/ambiente)
+
+### Miglioramenti UI/UX
+- [ ] **Ottimizzazione per tablet** (layout responsive)
+- [ ] **Dark mode** completo
+- [ ] **Animazioni** transizioni
+- [ ] **Indicatore progresso** dettagliato con step
+- [ ] **Preview in tempo reale** (se possibile)
+
+### Ottimizzazioni Tecniche
+- [ ] **Caching immagini** trasformate
+- [ ] **Retry automatico** su errori temporanei
+- [ ] **Compressione adattiva** basata su qualità rete
+- [ ] **Supporto offline** con queue
 
 ---
 
 ## 📄 Licenza
 
-Distribuito sotto licenza **MIT**. Vedi [LICENSE](LICENSE) per maggiori informazioni.
-
-```
-MIT License
-
-Copyright (c) 2024 RicAnn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
-```
+[Specifica la tua licenza]
 
 ---
 
-## 👨‍💻 Autore
+## 👥 Contributi
 
-**RicAnn**
-
-- GitHub: [@RicAnn](https://github.com/RicAnn)
-- Repository: [MakeYourHomeAi](https://github.com/RicAnn/MakeYourHomeAi)
+Contributi, issue e feature request sono benvenuti!
 
 ---
 
-## 🎉 Ringraziamenti
+## 📧 Contatti
 
-- **Stability AI** per le potenti API di image generation
-- **Android Team** per Jetpack Compose e CameraX
-- **Open Source Community** per le librerie utilizzate:
-  - Retrofit & OkHttp
-  - Coil
-  - Material Design 3
-  - Kotlin Coroutines
+- **Progetto**: MakeYourHomeAi
+- **Sviluppatore**: [Tuo Nome]
+- **Email**: [Tua Email]
 
 ---
 
-## ⭐ Se ti piace questo progetto...
+## 🙏 Ringraziamenti
 
-Lascia una ⭐ su GitHub! Ci aiuta a far crescere il progetto e a sviluppare nuove funzionalità.
+- **Stability AI** per l'API SD3
+- **Google** per CameraX e Jetpack Compose
+- **Square** per OkHttp
+- **Community Android** per le librerie open source
 
 ---
 
-<div align="center">
-
-**🏠 MakeYourHomeAi - Trasforma la tua casa con l'intelligenza artificiale! ✨**
-
-[Documentazione](QUICK_START.md) • [Issues](https://github.com/RicAnn/MakeYourHomeAi/issues) • [Contribuisci](DEVELOPMENT.md)
-
-Made with ❤️ and 🤖 AI
-
-</div>
+**Fatto con ❤️ usando Kotlin e Jetpack Compose**

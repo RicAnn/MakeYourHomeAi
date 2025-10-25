@@ -1,340 +1,331 @@
 package com.makeyourhomeai.ui.screens
 
 import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import com.makeyourhomeai.data.models.DesignStyle
-import com.makeyourhomeai.data.models.RoomType
-import com.makeyourhomeai.ui.viewmodels.TransformUiState
-import com.makeyourhomeai.ui.viewmodels.TransformViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.makeyourhomeai.viewmodel.TransformViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransformScreen(
-    viewModel: TransformViewModel,
-    onBack: () -> Unit
+    imageUri: Uri?,
+    onNavigateToCamera: () -> Unit,
+    viewModel: TransformViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val imageUri by viewModel.imageUri.collectAsState()
-    val selectedRoomType by viewModel.selectedRoomType.collectAsState()
-    val selectedStyle by viewModel.selectedStyle.collectAsState()
-    
+
+    var selectedRoomType by remember { mutableStateOf("living_room") }
+    var selectedStyle by remember { mutableStateOf("modern") }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            viewModel.resetState()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.resetState()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Trasforma con AI") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Indietro")
-                    }
-                }
+                title = { Text("Trasforma il tuo Ambiente") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
             )
         }
-    ) { paddingValues ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Mostra immagine originale
-            imageUri?.let { uri ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
-                        contentDescription = "Foto originale",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            when (uiState) {
-                is TransformUiState.Initial, is TransformUiState.ReadyToTransform -> {
-                    // Selezione tipo ambiente
+                    if (imageUri != null) {
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = "Immagine selezionata",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
                     Text(
                         text = "Tipo di Ambiente",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(RoomType.values().toList()) { roomType ->
-                            RoomTypeChip(
-                                roomType = roomType,
-                                isSelected = roomType == selectedRoomType,
-                                onClick = { viewModel.setRoomType(roomType) }
-                            )
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Selezione stile
-                    Text(
-                        text = "Stile di Ristrutturazione",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(DesignStyle.values().toList()) { style ->
-                            StyleChip(
-                                style = style,
-                                isSelected = style == selectedStyle,
-                                onClick = { viewModel.setStyle(style) }
-                            )
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(32.dp))
-                    
-                    // Pulsante trasforma
-                    Button(
-                        onClick = { viewModel.transformImage() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        enabled = selectedRoomType != null && selectedStyle != null
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Trasforma con AI",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-                
-                is TransformUiState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(64.dp)
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "L'AI sta trasformando la tua immagine...",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Questo potrebbe richiedere 30-60 secondi",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-                
-                is TransformUiState.Success -> {
-                    val result = (uiState as TransformUiState.Success).result
-                    
-                    Text(
-                        text = "✨ Trasformazione Completata!",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Confronto Prima/Dopo
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Prima
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Prima",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Card {
-                                Image(
-                                    painter = rememberAsyncImagePainter(Uri.parse(result.originalImageUri)),
-                                    contentDescription = "Prima",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                        FilterChip(
+                            selected = selectedRoomType == "living_room",
+                            onClick = { selectedRoomType = "living_room" },
+                            label = { Text("Soggiorno") }
+                        )
+                        FilterChip(
+                            selected = selectedRoomType == "bedroom",
+                            onClick = { selectedRoomType = "bedroom" },
+                            label = { Text("Camera") }
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = selectedRoomType == "kitchen",
+                            onClick = { selectedRoomType = "kitchen" },
+                            label = { Text("Cucina") }
+                        )
+                        FilterChip(
+                            selected = selectedRoomType == "bathroom",
+                            onClick = { selectedRoomType = "bathroom" },
+                            label = { Text("Bagno") }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Stile Ambiente",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = selectedStyle == "modern",
+                            onClick = { selectedStyle = "modern" },
+                            label = { Text("Moderno") }
+                        )
+                        FilterChip(
+                            selected = selectedStyle == "minimalist",
+                            onClick = { selectedStyle = "minimalist" },
+                            label = { Text("Minimal") }
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = selectedStyle == "industrial",
+                            onClick = { selectedStyle = "industrial" },
+                            label = { Text("Industrial") }
+                        )
+                        FilterChip(
+                            selected = selectedStyle == "scandinavian",
+                            onClick = { selectedStyle = "scandinavian" },
+                            label = { Text("Nordico") }
+                        )
+                    }
+                }
+            }
+
+            when (val state = uiState) {
+                is TransformViewModel.UiState.Idle -> {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                imageUri?.let {
+                                    viewModel.transformImage(
+                                        context = context,
+                                        imageUri = it,
+                                        roomType = selectedRoomType,
+                                        style = selectedStyle
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = imageUri != null
+                        ) {
+                            Text("Trasforma")
                         }
-                        
-                        // Dopo
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Dopo",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Card {
-                                Image(
-                                    painter = rememberAsyncImagePainter(Uri.parse(result.transformedImageUrl)),
-                                    contentDescription = "Dopo",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+
+                        OutlinedButton(
+                            onClick = onNavigateToCamera,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Scatta Foto")
+                        }
+
+                        FilledTonalButton(
+                            onClick = { galleryLauncher.launch("image/*") },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Galleria")
                         }
                     }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Info trasformazione
+                }
+
+                is TransformViewModel.UiState.Loading -> {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            CircularProgressIndicator()
                             Text(
-                                text = "Dettagli Trasformazione",
-                                fontWeight = FontWeight.Bold
+                                text = "Trasformazione in corso...",
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("Ambiente: ${result.roomType.displayName}")
-                            Text("Stile: ${result.style.displayName}")
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Pulsanti azione
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = { viewModel.reset() },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Nuova Foto")
-                        }
-                        
-                        Button(
-                            onClick = { /* TODO: Salva */ },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Salva")
                         }
                     }
                 }
-                
-                is TransformUiState.Error -> {
-                    val message = (uiState as TransformUiState.Error).message
-                    
+
+                is TransformViewModel.UiState.Success -> {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "Risultato",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            AsyncImage(
+                                model = state.imageUrl,
+                                contentDescription = "Immagine trasformata",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                imageUri?.let {
+                                    viewModel.transformImage(
+                                        context = context,
+                                        imageUri = it,
+                                        roomType = selectedRoomType,
+                                        style = selectedStyle
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Ritrasforma")
+                        }
+
+                        OutlinedButton(
+                            onClick = onNavigateToCamera,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Nuova Foto")
+                        }
+                    }
+                }
+
+                is TransformViewModel.UiState.Error -> {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer
                         )
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             Text(
-                                text = "⚠️ Errore",
-                                fontWeight = FontWeight.Bold,
+                                text = "Errore",
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = message,
+                                text = state.message,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
                     }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    Button(
-                        onClick = { viewModel.reset() },
-                        modifier = Modifier.fillMaxWidth()
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("Riprova")
+                        Button(
+                            onClick = {
+                                imageUri?.let {
+                                    viewModel.transformImage(
+                                        context = context,
+                                        imageUri = it,
+                                        roomType = selectedRoomType,
+                                        style = selectedStyle
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Riprova")
+                        }
+
+                        OutlinedButton(
+                            onClick = onNavigateToCamera,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Nuova Foto")
+                        }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun RoomTypeChip(
-    roomType: RoomType,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    FilterChip(
-        selected = isSelected,
-        onClick = onClick,
-        label = { Text(roomType.displayName) },
-        leadingIcon = if (isSelected) {
-            { Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp)) }
-        } else null
-    )
-}
-
-@Composable
-fun StyleChip(
-    style: DesignStyle,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    FilterChip(
-        selected = isSelected,
-        onClick = onClick,
-        label = { Text(style.displayName) },
-        leadingIcon = if (isSelected) {
-            { Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp)) }
-        } else null
-    )
 }
