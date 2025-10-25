@@ -1,0 +1,82 @@
+# 📝 Modifica da fare in app/build.gradle.kts
+
+## TROVA questa sezione:
+
+```kotlin
+android {
+    namespace = "com.makeyourhomeai"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.makeyourhomeai"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+```
+
+## AGGIUNGI queste righe DOPO `defaultConfig {`:
+
+```kotlin
+    defaultConfig {
+        applicationId = "com.makeyourhomeai"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+        
+        // ⚠️ AGGIUNGI QUESTE RIGHE ⬇️
+        // Leggi API key da local.properties
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { localProperties.load(it) }
+        }
+        buildConfigField("String", "STABILITY_API_KEY", 
+            "\"${localProperties.getProperty("STABILITY_API_KEY", "")}\"")
+    }
+```
+
+## TROVA questa altra sezione:
+
+```kotlin
+    buildFeatures {
+        compose = true
+    }
+```
+
+## MODIFICA in:
+
+```kotlin
+    buildFeatures {
+        compose = true
+        buildConfig = true  // ⚠️ AGGIUNGI QUESTA RIGA
+    }
+```
+
+## AGGIUNGI in cima al file (dopo `plugins {}`):
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+// ⚠️ AGGIUNGI QUESTE RIGHE ⬇️
+import java.util.Properties
+
+android {
+    // ... resto del codice
+}
+```

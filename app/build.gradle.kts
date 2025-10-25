@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,8 +21,13 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "STABILITY_API_KEY", "\"sk-GmrhCzfBj8FQPICcsC7VJckv49PttRT4Z3mNuNzBpf5t5gaZ\"")
-
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { localProperties.load(it) }
+        }
+        buildConfigField("String", "STABILITY_API_KEY",
+            "\"${localProperties.getProperty("STABILITY_API_KEY", "")}\"")
     }
 
     buildTypes {
