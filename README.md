@@ -54,7 +54,7 @@ App Android per trasformare foto di ambienti domestici utilizzando l'AI di Stabi
 - **Gradle**: 8.2
 - **AGP**: 8.2.2
 - **Kotlin**: 1.9.0
-- **API Key Stability AI** (configurata nel repository)
+- **API Key Stability AI** (vedi [SETUP_API_KEY.md](SETUP_API_KEY.md))
 
 ---
 
@@ -63,18 +63,24 @@ App Android per trasformare foto di ambienti domestici utilizzando l'AI di Stabi
 ### 1. Clona il Repository
 
 ```bash
-git clone https://github.com/tuousername/MakeYourHomeAi.git
+git clone https://github.com/RicAnn/MakeYourHomeAi.git
 cd MakeYourHomeAi
 ```
 
 ### 2. Configura API Key
 
-L'API key è già configurata in `ImageTransformRepository.kt`:
-```kotlin
-private val apiKey = "sk-GmrhCzfBj8FQPICcsC7VJckv49PttRT4Z3mNuNzBpf5t5gaZ"
+⚠️ **IMPORTANTE**: L'API key NON è inclusa nel repository per sicurezza.
+
+Crea il file `local.properties` nella root del progetto:
+
+```properties
+sdk.dir=/path/to/your/Android/Sdk
+STABILITY_API_KEY=your_api_key_here
 ```
 
-⚠️ **Nota**: Per uso in produzione, sposta la chiave in un file `local.properties` o usa variabili d'ambiente.
+Ottieni la tua API key gratuita su: https://platform.stability.ai/account/keys
+
+📚 **Guida completa**: [SETUP_API_KEY.md](SETUP_API_KEY.md)
 
 ### 3. Compila e Installa
 
@@ -184,27 +190,24 @@ L'app seleziona automaticamente la dimensione più vicina all'aspect ratio origi
 ## 🐛 Troubleshooting
 
 ### Timeout API
-**Problema**: "java.net.SocketTimeoutException"
+**Problema**: "java.net.SocketTimeoutException"  
 **Soluzione**: L'API può impiegare 60-120 secondi. Il timeout è impostato a 2 minuti. Riprova.
 
 ### Immagine Ruotata
-**Problema**: L'immagine appare ruotata dopo la trasformazione
+**Problema**: L'immagine appare ruotata dopo la trasformazione  
 **Soluzione**: ✅ Risolto con `ExifInterface` - correzione automatica
 
 ### API Error 400
-**Problema**: "strength: required when 'mode' is set to 'image-to-image'"
+**Problema**: "strength: required when 'mode' is set to 'image-to-image'"  
 **Soluzione**: ✅ Risolto - parametro `strength` corretto
 
 ### Crediti Esauriti
-**Problema**: "Insufficient credits"
+**Problema**: "Insufficient credits"  
 **Soluzione**: Stability AI ha un limite giornaliero gratuito. Attendi o upgrada il piano.
 
-### ADB Non Vede Dispositivo
-**Problema**: `adb devices` non mostra dispositivo
-**Soluzione**:
-1. Abilita Debug USB nelle Opzioni Sviluppatore
-2. Installa driver USB Samsung
-3. `adb kill-server && adb start-server`
+### BuildConfig.STABILITY_API_KEY not found
+**Problema**: Errore di compilazione  
+**Soluzione**: Verifica di aver creato `local.properties` con la tua API key. Vedi [SETUP_API_KEY.md](SETUP_API_KEY.md)
 
 ---
 
@@ -225,23 +228,16 @@ L'app seleziona automaticamente la dimensione più vicina all'aspect ratio origi
 
 ## 🔐 Sicurezza
 
-⚠️ **IMPORTANTE PER PRODUZIONE**:
+### API Key Protection
 
-1. **Non committare API keys** nel repository pubblico
-2. Usa variabili d'ambiente o `local.properties`:
-   ```kotlin
-   // In local.properties (gitignored)
-   STABILITY_API_KEY=your_key_here
-   
-   // In build.gradle.kts
-   android {
-       defaultConfig {
-           buildConfigField("String", "STABILITY_API_KEY", "\"${project.properties["STABILITY_API_KEY"]}\"")
-       }
-   }
-   ```
-3. Implementa **ProGuard/R8** per offuscare il codice
-4. Usa **App Bundle** invece di APK per distribuzione
+✅ **IMPLEMENTATO**: L'API key è protetta e NON è nel codice sorgente.
+
+- ✅ API key in `local.properties` (gitignored)
+- ✅ BuildConfig generato da Gradle
+- ✅ Nessuna chiave hardcoded nel repository
+- ✅ Documentazione per setup sviluppatori
+
+Per dettagli: [SETUP_API_KEY.md](SETUP_API_KEY.md)
 
 ---
 
@@ -273,21 +269,22 @@ L'app seleziona automaticamente la dimensione più vicina all'aspect ratio origi
 
 ## 📄 Licenza
 
-[Specifica la tua licenza]
+Questo progetto è sviluppato per scopi educativi presso:
+
+**ITC Vincenzo Arangio Ruiz - Roma**  
+Dipartimento di Informatica e Telecomunicazioni
 
 ---
 
-## 👥 Contributi
+## 👥 Autore
 
-Contributi, issue e feature request sono benvenuti!
+**Prof. Riccardo Annolfi**  
+Docente di Informatica  
+ITC Vincenzo Arangio Ruiz - Roma  
+Dipartimento di Informatica e Telecomunicazioni
 
----
-
-## 📧 Contatti
-
-- **Progetto**: MakeYourHomeAi
-- **Sviluppatore**: [Tuo Nome]
-- **Email**: [Tua Email]
+- GitHub: [@RicAnn](https://github.com/RicAnn)
+- Repository: [MakeYourHomeAi](https://github.com/RicAnn/MakeYourHomeAi)
 
 ---
 
@@ -297,7 +294,29 @@ Contributi, issue e feature request sono benvenuti!
 - **Google** per CameraX e Jetpack Compose
 - **Square** per OkHttp
 - **Community Android** per le librerie open source
+- **Studenti ITC Arangio Ruiz** per il feedback e testing
 
 ---
 
-**Fatto con ❤️ usando Kotlin e Jetpack Compose**
+## 📚 Utilizzo Didattico
+
+Questo progetto è stato sviluppato come materiale didattico per:
+- Insegnamento sviluppo app Android moderne
+- Integrazione API di terze parti
+- Architettura MVVM
+- Jetpack Compose
+- Processing immagini
+- Best practices sicurezza
+
+Gli studenti sono incoraggiati a:
+- 🔍 Studiare il codice
+- 🔧 Modificare e sperimentare
+- 🚀 Estendere con nuove funzionalità
+- 📝 Contribuire con miglioramenti
+
+---
+
+**Sviluppato con ❤️ per l'insegnamento dell'informatica**
+
+**ITC Vincenzo Arangio Ruiz - Roma**  
+**Dipartimento di Informatica e Telecomunicazioni**
